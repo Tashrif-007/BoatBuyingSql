@@ -1,0 +1,35 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  password String
+  boats    owns[]   // Relation field for owned boats
+}
+
+model Boat {
+  id       Int      @id @default(autoincrement())
+  boatname String   @unique
+  color    String
+  owners   owns[]   // Relation field for ownership
+}
+
+model owns {
+  id       Int      @id @default(autoincrement()) 
+  userId   Int
+  boatId   Int
+  buyDate  DateTime @default(now()) 
+
+  user User @relation(fields: [userId], references: [id]) // Reference to User id
+  boat Boat @relation(fields: [boatId], references: [id]) // Reference to Boat id
+
+  @@unique([userId, boatId]) 
+}
